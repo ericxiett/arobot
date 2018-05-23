@@ -88,27 +88,38 @@ def update_conf(conf):
             exit(1)
 
     db_api = dbapi.API()
+    icli = get_ironic_client()
+    node_list = icli.node.list()
     for row in range(1, sh.nrows):
         confed_sn = sh.cell_value(row, VALID_FIELDS.index('sn'))
+        confed_addr = sh.cell_value(row, VALID_FIELDS.index('ipmi_addr'))
+        confed_netmask = sh.cell_value(row, VALID_FIELDS.index('ipmi_netmask'))
+        confed_gateway = sh.cell_value(row, VALID_FIELDS.index('ipmi_gateway'))
         if db_api.get_ipmi_conf_by_sn(confed_sn):
             print('Bingo! %s IPMI conf will be updated...')
-            print('sn ', confed_sn, ', ipmi addr ',
-                  sh.cell_value(row, VALID_FIELDS.index('ipmi_addr')),
-                  ', ipmi netmask ',
-                  sh.cell_value(row, VALID_FIELDS.index('ipmi_netmask')),
-                  ', ipmi gateway ',
-                  sh.cell_value(row, VALID_FIELDS.index('ipmi_gateway')))
+            print('sn ', confed_sn, ', ipmi addr ', confed_addr,', ipmi netmask ',
+                  confed_netmask, ', ipmi gateway ', confed_gateway)
             conf_info = {
-                'address': sh.cell_value(
-                    row, VALID_FIELDS.index('ipmi_addr')),
-                'netmask': sh.cell_value(
-                    row, VALID_FIELDS.index('ipmi_netmask')),
-                'gateway': sh.cell_value(
-                    row, VALID_FIELDS.index('ipmi_gateway')),
+                'address': confed_addr,
+                'netmask': confed_netmask,
+                'gateway': confed_gateway,
                 'state': states.IPMI_CONF_CONFED,
                 'updated_at': datetime.datetime.now()
             }
             db_api.update_ipmi_conf_by_sn(confed_sn, conf_info)
+
+            # Update driver info of nodes in ironic
+            for node in node_list:
+                node_info = icli.node.get(node.uuid)
+                if node_info.extra['serial_number'] == confed_sn:
+                    patches = [
+                        {
+                            'op': 'add',
+                            'path': '/driver_info/ipmi_address',
+                            'value': confed_addr
+                        }
+                    ]
+                    icli.node.update(node.uuid, patches)
 
 
 def main():
