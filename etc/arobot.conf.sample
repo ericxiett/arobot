@@ -1,0 +1,7 @@
+[DEFAULT]
+# DB connection url
+db_connection = mysql+pymysql://arobot:arobot@127.0.0.1/arobot?charset=utf8
+
+[ironic]
+# API url
+api_url = http://127.0.0.1:6385/
