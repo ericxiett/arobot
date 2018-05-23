@@ -1,5 +1,6 @@
 from pecan import rest,expose
 
+from arobot.common import states
 from arobot.common.log_utils import LOG
 from arobot.db import api
 
@@ -19,7 +20,8 @@ class IPMIConfController(rest.RestController):
 
         ipmi_conf = self.dbapi.get_ipmi_conf_by_sn(sn)
         LOG.info('node %s ipmi conf: %s', sn, ipmi_conf)
-        if ipmi_conf is not None:
+        if ipmi_conf is not None and \
+                ipmi_conf.state == states.IPMI_CONF_CONFED:
             return {
                 'return_value': '1',
                 'sn': sn,
