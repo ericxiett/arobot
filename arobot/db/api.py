@@ -8,7 +8,7 @@ from arobot.common.config import CONF
 from arobot.db import models
 
 
-class API():
+class API(object):
 
     def __init__(self):
         super(API, self).__init__()

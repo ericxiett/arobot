@@ -7,6 +7,6 @@ class Controller(rest.RestController):
 
     ipmi_conf = ipmi.IPMIConfController()
 
-    @expose
+    @expose()
     def index(self):
         return 'Welcome to the controller.'
