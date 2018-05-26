@@ -20,8 +20,11 @@ class API(object):
 
     def get_ipmi_conf_by_sn(self, sn):
         session = sessionmaker(bind=self.engine)()
-        ipmi_conf = session.query(models.IPMIConf).filter_by(
-            sn=sn).one()
+        try:
+            ipmi_conf = session.query(models.IPMIConf).filter_by(
+                sn=sn).one()
+        except sqlalchemy.orm.exc.NoResultFound as e:
+            ipmi_conf = None
         session.close()
         return ipmi_conf
 

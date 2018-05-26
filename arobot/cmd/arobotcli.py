@@ -12,7 +12,7 @@ from arobot.common import states
 from arobot.common.config import CONF
 from arobot.db import api as dbapi
 
-DEFAULT_IRONIC_API_VERSION = '1.38'
+DEFAULT_IRONIC_API_VERSION = '1.22'
 
 VALID_FIELDS = ['index', 'sn', 'ipmi_addr', 'ipmi_netmask', 'ipmi_gateway']
 
