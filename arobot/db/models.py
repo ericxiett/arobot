@@ -1,5 +1,5 @@
 import datetime
-from sqlalchemy import Column, String, DateTime
+from sqlalchemy import Column, String, DateTime, Text
 from sqlalchemy.ext.declarative import declarative_base
 
 from arobot.common import states
@@ -18,3 +18,12 @@ class IPMIConf(Base):
     created_at = Column(DateTime, default=datetime.datetime.now())
     updated_at = Column(DateTime, nullable=True)
     deleted_at = Column(DateTime, nullable=True)
+
+
+class RAIDConf(Base):
+    __tablename__ = 'raid_conf'
+
+    id = Column(String(36), primary_key=True, nullable=False)
+    sn = Column(String(64), unique=True, nullable=False)
+    config = Column(Text)
+
