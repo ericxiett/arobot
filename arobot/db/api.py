@@ -1,5 +1,6 @@
 import uuid
 
+import json
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker
 
@@ -55,4 +56,34 @@ class API(object):
             sn=sn).update(values)
         session.commit()
         session.close()
+
+    def add_raid_conf(self, conf):
+        session = None
+        err = None
+        try:
+            session = sessionmaker(bind=self.engine)()
+            raid_id = str(uuid.uuid4())
+            raid_conf = conf.get('config')
+
+            if not isinstance(raid_conf, str):
+                raid_conf = json.dumps(raid_conf)
+
+            session.add(
+                models.RAIDConf(
+                    id=raid_id,
+                    sn=conf.get('sn'),
+                    config=raid_conf
+                )
+            )
+            session.commit()
+        except Exception as e:
+            print(e)
+            err = e
+        finally:
+            if session:
+                session.close()
+
+        ok = False if err else True
+        return ok, err
+
 

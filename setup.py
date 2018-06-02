@@ -14,6 +14,10 @@ setup(
     author_email='',
     install_requires=[
         "pecan",
+        "xlrd",
+        "xlwt",
+        "python-ironicclient",
+        "pymysql"
     ],
     test_suite='arobot',
     zip_safe=False,
