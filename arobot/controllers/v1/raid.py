@@ -16,6 +16,7 @@ class RAIDConfController(rest.RestController):
 
     @expose('json')
     def post(self, **kwargs):
+        LOG.info("New RAID configuration received %s", kwargs)
         ok, err = self.dbapi.add_raid_conf(kwargs)
 
         if ok:
