@@ -5,3 +5,13 @@ db_connection = mysql+pymysql://arobot:arobot@127.0.0.1/arobot?charset=utf8
 [ironic]
 # API url
 api_url = http://127.0.0.1:6385/
+
+[ipmi]
+# IPMI user name
+username = admin
+
+# IPMI password
+password = admin
+
+# Automatic shutdown delay time(second)
+shutdown_delay = 300

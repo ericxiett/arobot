@@ -50,7 +50,8 @@ def list_devices_raw():
 
 
 def export_tpl():
-
+    # run def list_devices_raw() to find new devices
+    list_devices_raw()
     # Init workbook
     style0 = xlwt.easyxf('font: name Times New Roman,'
                          ' bold on', num_format_str='#,##0.00')
