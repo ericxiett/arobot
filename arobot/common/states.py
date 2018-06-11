@@ -8,4 +8,5 @@ IPMI_CONF_RAW = 'raw'
 IPMI_CONF_CONFED = 'confed'
 # Deleted
 IPMI_CONF_DEL = 'del'
-
+#Config success
+IPMI_CONF_SUCCESS = 'success'
