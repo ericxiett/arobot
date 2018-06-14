@@ -43,6 +43,7 @@ class IPMIConfController(rest.RestController):
         LOG.info('Config ipmi success, sn: %s', sn)
         ipmi_conf = self.dbapi.get_ipmi_conf_by_sn(sn)
         LOG.info(ipmi_conf)
+        flag = '0'
         if ipmi_conf is not None and ipmi_conf.state == states.IPMI_CONF_CONFED:
             values = {"state": states.IPMI_CONF_SUCCESS}
             update_result = self.dbapi.update_ipmi_conf_by_sn(sn, values)
@@ -57,7 +58,13 @@ class IPMIConfController(rest.RestController):
             LOG.info("do shutdown now.....")
             try:
                 os.system("echo %s && ipmitool -I lan -H %s -U %s -P '%s' power off " % (ip, ip, username, password))
+                flag = '1'
             except OSError, error:
                 LOG.error(error)
         else:
             LOG.error("Config ipmi failed.Can't find ipmi_conf for sn: %s",sn)
+
+        return {
+            'return_value': flag,
+            'sn': sn,
+        }
