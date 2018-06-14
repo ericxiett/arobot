@@ -57,7 +57,7 @@ class IPMIConfController(rest.RestController):
             password = CONF.get('ipmi', 'password')
             LOG.info("do shutdown now.....")
             try:
-                os.system("echo %s && ipmitool -I lan -H %s -U %s -P '%s' power off " % (ip, ip, username, password))
+                os.system("echo %s && ipmitool -I lanplus -H %s -U %s -P '%s' power off " % (ip, ip, username, password))
                 flag = '1'
             except OSError, error:
                 LOG.error(error)
