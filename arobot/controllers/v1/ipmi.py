@@ -46,13 +46,17 @@ class IPMIConfController(rest.RestController):
         if ipmi_conf is not None and ipmi_conf.state == states.IPMI_CONF_CONFED:
             values = {"state": states.IPMI_CONF_SUCCESS}
             update_result = self.dbapi.update_ipmi_conf_by_sn(sn, values)
+            LOG.info("update ipmi_conf state to success.")
             shutdown_delay = CONF.get('ipmi', 'shutdown_delay')
             #sleep
+            LOG.info("sleep %s seconds ",shutdown_delay)
             time.sleep(shutdown_delay)
             ip = ipmi_conf.address
+            username = CONF.get('ipmi', 'username')
             password = CONF.get('ipmi', 'password')
+            LOG.info("do shutdown now.....")
             try:
-                os.system("echo %s && ipmitool -I lan -H %s -U root -P '%s' power off " % (ip, ip, password))
+                os.system("echo %s && ipmitool -I lan -H %s -U %s -P '%s' power off " % (ip, ip, username, password))
             except OSError, error:
                 LOG.error(error)
         else:
