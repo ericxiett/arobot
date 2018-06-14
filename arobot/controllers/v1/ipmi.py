@@ -42,6 +42,7 @@ class IPMIConfController(rest.RestController):
     def put(self, sn):
         LOG.info('Config ipmi success, sn: %s', sn)
         ipmi_conf = self.dbapi.get_ipmi_conf_by_sn(sn)
+        LOG.info(ipmi_conf)
         if ipmi_conf is not None and ipmi_conf.state == states.IPMI_CONF_CONFED:
             values = {"state": states.IPMI_CONF_SUCCESS}
             update_result = self.dbapi.update_ipmi_conf_by_sn(sn, values)
@@ -55,5 +56,4 @@ class IPMIConfController(rest.RestController):
             except OSError, error:
                 LOG.error(error)
         else:
-            print ipmi_conf
             LOG.error("Config ipmi failed.Can't find ipmi_conf for sn: %s",sn)
