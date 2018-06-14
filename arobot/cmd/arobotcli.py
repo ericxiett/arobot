@@ -43,7 +43,7 @@ def list_devices_raw():
             print(id, sn, states.IPMI_CONF_RAW)
             node_num += 1
         elif db_record.state == states.IPMI_CONF_RAW:
-            print(db_record.id, db_record.sn, db_record.IPMI_CONF_RAW)
+            print(db_record.id, db_record.sn, db_record.state)
             node_num += 1
 
     print('There is total %d devices that should be configured.' % node_num)
