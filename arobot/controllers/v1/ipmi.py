@@ -50,8 +50,8 @@ class IPMIConfController(rest.RestController):
             LOG.info("update ipmi_conf state to success.")
             shutdown_delay = CONF.get('ipmi', 'shutdown_delay')
             #sleep
-            LOG.info("sleep %s seconds ",shutdown_delay)
-            time.sleep(shutdown_delay)
+            LOG.info("sleep %s seconds ", shutdown_delay)
+            time.sleep(float(shutdown_delay))
             ip = ipmi_conf.address
             username = CONF.get('ipmi', 'username')
             password = CONF.get('ipmi', 'password')
