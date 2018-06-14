@@ -55,4 +55,5 @@ class IPMIConfController(rest.RestController):
             except OSError, error:
                 LOG.error(error)
         else:
+            print ipmi_conf
             LOG.error("Config ipmi failed.Can't find ipmi_conf for sn: %s",sn)
