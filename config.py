@@ -20,7 +20,7 @@ app = {
 logging = {
     'root': {'level': 'INFO', 'handlers': ['console']},
     'loggers': {
-        'arobot': {'level': 'DEBUG', 'handlers': ['console'], 'propagate': False},
+        'arobot': {'level': 'DEBUG', 'handlers': ['logfile'], 'propagate': False},
         'pecan': {'level': 'DEBUG', 'handlers': ['console'], 'propagate': False},
         'py.warnings': {'handlers': ['console']},
         '__force_dict__': True
@@ -29,6 +29,12 @@ logging = {
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
+            'formatter': 'color'
+        },
+        'logfile': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '/var/log/arobot/arobot.log',
             'formatter': 'color'
         }
     },
