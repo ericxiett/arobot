@@ -46,19 +46,16 @@ class IPMIConfController(rest.RestController):
         LOG.info('Config ipmi success, sn: %s', sn)
         ipmi_conf = self.dbapi.get_ipmi_conf_by_sn(sn)
         LOG.info(ipmi_conf)
-        flag = '0'
         if ipmi_conf is not None and ipmi_conf.state == states.IPMI_CONF_CONFED:
             values = {"state": states.IPMI_CONF_SUCCESS}
 
             update_result = self.dbapi.update_ipmi_conf_by_sn(sn, values)
             LOG.info("update ipmi_conf state to success.")
 
-            shutdown_delay = CONF.get('ipmi', 'shutdown_delay')
-            time.sleep(float(shutdown_delay))
             ip = ipmi_conf.address
             username = CONF.get('ipmi', 'username')
             password = CONF.get('ipmi', 'password')
-            LOG.info("do shutdown now.....")
+            LOG.info("start a sub thread ...")
             args = {
                 'ip': ip,
                 'username': username,
@@ -74,11 +71,6 @@ class IPMIConfController(rest.RestController):
         else:
             LOG.error("Config ipmi failed.Can't find ipmi_conf for sn: %s", sn)
 
-        return {
-            'return_value': flag,
-            'sn': sn,
-        }
-
 
 def check_ipmi_and_shutdown(args):
     ip = args.get('ip')
@@ -87,21 +79,22 @@ def check_ipmi_and_shutdown(args):
     frequency = args.get('frequency')
     port = args.get('port')
     sn = args.get('sn')
-
+    LOG.info("IPMI config. start function:check_ipmi_and_shutdown")
     flag = check_connection(ip, port, frequency)
-
+    LOG.info("IPMI config. check_connection return value : %s", flag)
     if flag:
         ##  ipmi address connection success.
         ##  do power off now.
         LOG.info("IPMI config success. power off server   sn = %s", sn)
         os.system(
             "echo %s && ipmitool -I lanplus -H %s -U %s -P '%s' power off " % (ip, ip, username, password))
-    else :
+    else:
         LOG.error("Config ipmi failed. ipmi address can't connect  sn=: %s", sn)
 
 
 def check_connection(ip, port, frequency):
     sock = socket.socket()
+    LOG.info("IPMI config. start function check_connection")
     while frequency >= 0:
         try:
             sock.connect((ip, port))
