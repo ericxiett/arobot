@@ -66,7 +66,6 @@ class IPMIConfController(rest.RestController):
             }
             ## start and subthread to check ipmi config and then do power off.
             t = threading.Thread(target=check_ipmi_and_shutdown, name=sn, args=(args,))
-            t.setDaemon(True)
             t.start()
             LOG.info("start thread success...")
         else:
