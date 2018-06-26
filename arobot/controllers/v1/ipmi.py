@@ -75,6 +75,7 @@ class IPMIConfController(rest.RestController):
 def check_ipmi_and_shutdown(args):
     LOG.info(
         "thread name = {}, thread id = {}".format(threading.current_thread().name, threading.current_thread().ident))
+    LOG.info("args=:", args)
     ip = args.get('ip')
     username = args.get('username')
     password = args.get('password')
@@ -97,10 +98,11 @@ def check_ipmi_and_shutdown(args):
 def check_connection(ip, port, frequency):
     sock = socket.socket()
     LOG.info("IPMI config. start function check_connection")
+    sock.settimeout(60)
     while frequency >= 0:
         try:
-            sock.connect((ip, port))
             LOG.info("Connected to %s on port %s", ip, port)
+            sock.connect((ip, port))
             return True
         except socket.error, e:
             LOG.info("Connection to %s on port %s failed: %s,"
