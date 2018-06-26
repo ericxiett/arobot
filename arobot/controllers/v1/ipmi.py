@@ -61,7 +61,7 @@ class IPMIConfController(rest.RestController):
                 'username': username,
                 'password': password,
                 'frequency': '5',
-                'port': '623',
+                'port': 623,
                 'sn': sn
             }
             ## start and subthread to check ipmi config and then do power off.
@@ -108,5 +108,5 @@ def check_connection(ip, port, frequency):
             LOG.info("Connection to %s on port %s failed: %s,"
                      " wait and try  %s times more ", ip, port, e, frequency)
             frequency -= 1
-            time.sleep(3)
+            time.sleep(2)
     return False
