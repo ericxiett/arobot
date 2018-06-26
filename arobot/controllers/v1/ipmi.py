@@ -75,7 +75,7 @@ class IPMIConfController(rest.RestController):
 def check_ipmi_and_shutdown(args):
     LOG.info(
         "thread name = {}, thread id = {}".format(threading.current_thread().name, threading.current_thread().ident))
-    LOG.info("args=:", args)
+    LOG.info("args=:%s", args)
     ip = args.get('ip')
     username = args.get('username')
     password = args.get('password')
