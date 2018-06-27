@@ -81,9 +81,11 @@ def export_raid_xls():
     :return:
     """
     style0 = xlwt.easyxf('font: name Times New Roman,'
-                         ' bold on; align: horiz center', num_format_str='#,##0.00')
+                         ' bold on; align: horiz center')
     style1 = xlwt.easyxf('font: name Times New Roman,'
                          '; align: horiz center', num_format_str='#,##0.00')
+    style2 = xlwt.easyxf('font: name Times New Roman,'
+                         '; align: horiz center')
     wb = xlwt.Workbook()
     ws = wb.add_sheet('raid conf')
 
@@ -96,7 +98,7 @@ def export_raid_xls():
     all_raid_configs, _ = db_api.get_all_raid_config()
     row = 1
     for rd in all_raid_configs:
-        ws.write(row, RAID_FILEDS.index('index'), row, style1)
+        ws.write(row, RAID_FILEDS.index('index'), row, style2)
         ws.write(row, RAID_FILEDS.index('sn'), rd.sn, style1)
         config = json.loads(rd.config)
 
