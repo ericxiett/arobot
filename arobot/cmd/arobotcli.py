@@ -7,6 +7,7 @@ import sys
 import xlrd as xlrd
 import xlwt as xlwt
 from ironicclient import client
+import json
 
 from arobot.common import states
 from arobot.common.config import CONF
@@ -70,6 +71,47 @@ def export_tpl():
 
     wb.save('ipmi_conf.xls')
     print('Generate ipmi_conf excel template ipmi_conf.xls successfully!')
+
+
+def export_raid_xls():
+    """
+    export raid configuration in database to excel sheet
+    notice that if configuration does not save in database successfully,
+    it will not be able to be exported
+    :return:
+    """
+    style0 = xlwt.easyxf('font: name Times New Roman,'
+                         ' bold on; align: horiz center')
+    style1 = xlwt.easyxf('font: name Times New Roman,'
+                         '; align: horiz center', num_format_str='#,##0.00')
+    style2 = xlwt.easyxf('font: name Times New Roman,'
+                         '; align: horiz center')
+    wb = xlwt.Workbook()
+    ws = wb.add_sheet('raid conf')
+
+    RAID_FILEDS = ['index', 'sn', 'RAID 0', 'RAID 1', 'RAID 5', 'RAW']
+
+    for col in range(len(RAID_FILEDS)):
+        ws.write(0, col, RAID_FILEDS[col], style0)
+
+    db_api = dbapi.API()
+    all_raid_configs, _ = db_api.get_all_raid_config()
+    row = 1
+    for rd in all_raid_configs:
+        ws.write(row, RAID_FILEDS.index('index'), row, style2)
+        ws.write(row, RAID_FILEDS.index('sn'), rd.sn, style1)
+        config = json.loads(rd.config)
+
+        for key, val in config.items():
+            if RAID_FILEDS.index(str(key)) >= 0:
+                ws.write(row, RAID_FILEDS.index(key), ";".join([json.dumps(obj) for obj in val]), style1)
+
+        row += 1
+
+
+    # ws.col(0).width = 256*20
+    wb.save('raid_config.xls')
+    print('Generate raid_config excel template raid_config.xls successfully!')
 
 
 def update_conf(conf):

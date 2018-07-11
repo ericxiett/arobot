@@ -17,8 +17,14 @@ setup(
         "xlrd",
         "xlwt",
         "python-ironicclient",
-        "pymysql"
+        "pymysql",
+        "sqlalchemy"
     ],
+    entry_points = {
+        'console_scripts': [
+            'arobot = arobot.cmd.arobotcli:main'
+        ]
+    },
     test_suite='arobot',
     zip_safe=False,
     include_package_data=True,
