@@ -22,21 +22,33 @@ class IPMIConfController(rest.RestController):
 
         ipmi_conf = self.dbapi.get_ipmi_conf_by_sn(sn)
         LOG.info('node %s ipmi conf: %s', sn, ipmi_conf)
-        if ipmi_conf is not None and \
-                ipmi_conf.state == states.IPMI_CONF_CONFED:
+        if ipmi_conf is None:
             return {
-                'return_value': '1',
+                'return_value': 'NotFound',
+                'sn': sn,
+                'message': 'IPMI conf info not found'
+            }
+        elif ipmi_conf.state == states.IPMI_CONF_CONFED:
+            return {
+                'return_value': 'NeedConf',
                 'sn': sn,
                 'ipmi_address': ipmi_conf.address,
                 'ipmi_netmask': ipmi_conf.netmask,
                 'ipmi_gateway': ipmi_conf.gateway
             }
+        elif ipmi_conf.state == states.IPMI_CONF_SUCCESS:
+            return {
+                'return_value': 'Success',
+                'sn': sn,
+                'state': states.IPMI_CONF_SUCCESS
+            }
         else:
             return {
-                'return_value': '0',
+                'return_value': 'UnknownERR',
                 'sn': sn,
-                'message': 'Device not found'
+                'message': 'Unknown ERROR'
             }
+
 
     @expose('json')
     def put(self, sn):
