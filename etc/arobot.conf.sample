@@ -1,6 +1,7 @@
 [DEFAULT]
 # DB connection url
 db_connection = mysql+pymysql://arobot:arobot@127.0.0.1/arobot?charset=utf8
+pecan_config_path = /arobot/config.py
 
 [ironic]
 # API url
