@@ -107,6 +107,34 @@ class API(object):
         ok = False if err else True
         return ok, err
 
+    def get_raid_config_by_sn(self, sn):
+        """
+        get raid configuration by given serial number
+        :param sn:  serial number
+        :return:  object if there is one
+                  None if there is none
+        """
+
+        session = None
+        err = None
+        raid_config = None
+        try:
+            session = sessionmaker(bind=self.engine)()
+            raid_config = session.query(models.RAIDConf).filter_by(sn=sn).one()
+        except Exception as e:
+            # exception will be thrown if no candidates
+            LOG.error(e)
+            err = e
+        finally:
+            if session:
+                try:
+                    session.close()
+                except Exception as e:
+                    err = e
+                    LOG.error(" Failed closing session %s " % Exception)
+
+        return raid_config, err
+
     def get_all_raid_config(self):
         """
         get all existing RAID configurations
