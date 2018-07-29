@@ -135,6 +135,55 @@ class API(object):
 
         return raid_config, err
 
+    def save_raid_opt(self, opt):
+        session = None
+        err = None
+
+        try:
+            session = sessionmaker(bind=self.engine)()
+            session.add(models.RAIDOpt(
+                id=str(uuid.uuid4()),
+                sn=opt.get('sn', None),
+                ssd=opt.get('ssd', 0),
+                sas=opt.get('sas', 0),
+                sata=opt.get('sata', 0),
+                config=opt['config']
+            ))
+            session.commit()
+        except Exception as e:
+            LOG.error(e)
+        finally:
+            if session:
+                try:
+                    session.close()
+                except Exception as e:
+                    LOG.error('failed closing session', e)
+
+    def save_all_raid_opts(self, opts):
+        session = None
+        err = None
+
+        try:
+            session = sessionmaker(bind=self.engine)()
+            for opt in opts:
+                session.add(models.RAIDOpt(
+                    id=str(uuid.uuid4()),
+                    sn=opt.get('sn', None),
+                    ssd=opt.get('ssd', 0),
+                    sas=opt.get('sas', 0),
+                    sata=opt.get('sata', 0),
+                    config=opt['config']
+                ))
+            session.commit()
+        except Exception as e:
+            LOG.error(e)
+        finally:
+            if session:
+                try:
+                    session.close()
+                except Exception as e:
+                    LOG.error('failed closing session', e)
+
     def get_all_raid_config(self):
         """
         get all existing RAID configurations

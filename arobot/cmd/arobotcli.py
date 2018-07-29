@@ -73,6 +73,38 @@ def export_tpl():
     print('Generate ipmi_conf excel template ipmi_conf.xls successfully!')
 
 
+def import_raid_config(file_name):
+    """
+    collect raid configuration from input yaml file
+
+    configuration file format:
+        configs:
+          - name:
+            sn:
+            num:
+              ssd:
+              sata:
+              sas:
+            tasks:
+               - size:
+                 type:
+                 level:
+               - size:
+                 type:
+                 level:
+               ...
+    """
+
+    import yaml
+    try:
+        with open(file_name) as fd:
+            configs = yaml.safe_load(fd)
+            dbapi.API().save_all_raid_opts(configs.get('configs', []))
+        print('successfully save input raid configuration options to database')
+    except Exception as e:
+        print(e)
+
+
 def export_raid_xls():
     """
     export raid configuration in database to excel sheet
@@ -176,6 +208,8 @@ def main():
         update_conf(args.update_conf)
     elif args.export_raid_xls:
         export_raid_xls()
+    elif args.raid_opt_file:
+        import_raid_config(args.raid_opt_file)
 
 
 def get_argparser():
@@ -188,6 +222,8 @@ def get_argparser():
                         action='store_true')
     parser.add_argument('--export-tpl', help='Export template of devices info',
                         action='store_true')
+    parser.add_argument('--raid-opt-file', help='Raid options path',
+                        action='store')
     parser.add_argument('--export-raid-xls', help='Export raid configuration excel worksheet',
                         action='store_true')
     parser.add_argument('--update-conf', metavar='infile',
