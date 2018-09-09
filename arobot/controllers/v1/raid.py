@@ -32,12 +32,12 @@ class RAIDConfController(rest.RestController):
         if err or config is None:
             LOG.error("error fetching configuration by given sn %s" % sn)
             return {
-                'is_ok': "false"
+                'is_ok': False
             }
         else:
             LOG.info("successfully get configuration by given serial number")
             return {
-                'is_ok': "true",
+                'is_ok': True,
                 'config': config.config,
                 'sn': config.sn
             }
