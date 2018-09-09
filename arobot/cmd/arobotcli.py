@@ -73,6 +73,38 @@ def export_tpl():
     print('Generate ipmi_conf excel template ipmi_conf.xls successfully!')
 
 
+def import_raid_config(file_name):
+    """
+    collect raid configuration from input yaml file
+
+    configuration file format:
+        configs:
+          - name:
+            sn:
+            num:
+              ssd:
+              sata:
+              sas:
+            tasks:
+               - size:
+                 type:
+                 level:
+               - size:
+                 type:
+                 level:
+               ...
+    """
+
+    import yaml
+    try:
+        with open(file_name) as fd:
+            configs = yaml.safe_load(fd)
+            dbapi.API().save_all_raid_opts(configs.get('configs', []))
+        print('successfully save input raid configuration options to database')
+    except Exception as e:
+        print(e)
+
+
 def export_raid_xls():
     """
     export raid configuration in database to excel sheet
@@ -174,14 +206,25 @@ def main():
         export_tpl()
     elif args.update_conf:
         update_conf(args.update_conf)
+    elif args.export_raid_xls:
+        export_raid_xls()
+    elif args.raid_opt_file:
+        import_raid_config(args.raid_opt_file)
 
 
 def get_argparser():
     parser = argparse.ArgumentParser()
+
+    # https://docs.python.org/3/library/argparse.html#action
+    # argparse implicitly converts internal dashes to underscores
     parser.add_argument('--list-devices-raw',
                         help='Display devices basic info that is not processed',
                         action='store_true')
     parser.add_argument('--export-tpl', help='Export template of devices info',
+                        action='store_true')
+    parser.add_argument('--raid-opt-file', help='Raid options path',
+                        action='store')
+    parser.add_argument('--export-raid-xls', help='Export raid configuration excel worksheet',
                         action='store_true')
     parser.add_argument('--update-conf', metavar='infile',
                         help='Update devices info configured by user')

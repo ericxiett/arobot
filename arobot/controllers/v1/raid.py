@@ -15,6 +15,34 @@ class RAIDConfController(rest.RestController):
         return {'msg': 'Hello!'}
 
     @expose('json')
+    def get(self, sn):
+        """
+        get raid configuration by serial number
+        :param sn:  serial number
+        :return:
+        an object with following structure:
+        {
+            "is_ok": True/False,
+            # RAID configuration parameters
+        }
+        """
+
+        config, err = self.dbapi.get_raid_config_by_sn(sn)
+
+        if err or config is None:
+            LOG.error("error fetching configuration by given sn %s" % sn)
+            return {
+                'is_ok': False
+            }
+        else:
+            LOG.info("successfully get configuration by given serial number")
+            return {
+                'is_ok': True,
+                'config': config.config,
+                'sn': config.sn
+            }
+
+    @expose('json')
     def post(self, **kwargs):
         LOG.info("New RAID configuration received %s", kwargs)
         ok, err = self.dbapi.add_raid_conf(kwargs)
