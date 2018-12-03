@@ -13,7 +13,6 @@ LOG = logging.getLogger(__name__)
 
 
 class API(object):
-
     def __init__(self):
         super(API, self).__init__()
         self._init_db_connect()
@@ -53,10 +52,24 @@ class API(object):
         session.close()
         return all_raws
 
+    def get_all_ipmi(self):
+        session = sessionmaker(bind=self.engine)()
+        all_configs = session.query(models.IPMIConf).all()
+        session.close()
+        return all_configs
+
     def update_ipmi_conf_by_sn(self, sn, values):
         session = sessionmaker(bind=self.engine)()
-        session.query(models.IPMIConf).filter_by(
+        count = session.query(models.IPMIConf).filter_by(
             sn=sn).update(values)
+
+        if count <= 0:
+            # create new record and update
+            ipmi_id = str(uuid.uuid4())
+            session.add(models.IPMIConf(id=ipmi_id, sn=sn, state=states.IPMI_CONF_RAW))
+            session.query(models.IPMIConf).filter_by(
+                sn=sn).update(values)
+
         session.commit()
         session.close()
 
@@ -209,4 +222,3 @@ class API(object):
                     LOG.error(" Failed closing session %s " % Exception)
 
         return raid_configs, err
-
