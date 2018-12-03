@@ -244,8 +244,8 @@ def main():
         export_raid_xls()
     elif args.raid_opt_file:
         import_raid_config(args.raid_opt_file)
-    elif args.direct:
-        direct_insert_conf(args.direct)
+    elif args.direct_insert_conf:
+        direct_insert_conf(args.direct_insert_conf)
 
 
 def get_argparser():
