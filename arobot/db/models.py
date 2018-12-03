@@ -32,7 +32,7 @@ class RAIDConf(Base):
 class RAIDOpt(Base):
 
     # this name is a little misleading
-    __tablenme__ = 'raid_opt'
+    __tablename__ = 'raid_opt'
 
     id = Column(String(36), primary_key=True, nullable=False)
     sn = Column(String(64), unique=True, nullable=True)
