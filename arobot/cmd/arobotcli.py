@@ -180,6 +180,28 @@ def direct_insert_conf(conf):
         db_api.update_ipmi_conf_by_sn(confed_sn, conf_info)
 
 
+def force_update_ironic():
+    icli = get_ironic_client()
+    node_list = icli.node.list()
+
+    db_api = dbapi.API()
+
+    all_ipmis = db_api.get_all_ipmi()
+
+    for conf in all_ipmis:
+        for node in node_list:
+            node_info = icli.node.get(node.uuid)
+            if node_info.extra['serial_number'] == conf.sn:
+                patches = [
+                    {
+                        'op': 'add',
+                        'path': '/driver_info/ipmi_address',
+                        'value': conf.address
+                    }
+                ]
+                icli.node.update(node.uuid, patches)
+
+
 def update_conf(conf):
     print('conf file: %s' % conf)
     # If conf file existed
@@ -246,6 +268,8 @@ def main():
         import_raid_config(args.raid_opt_file)
     elif args.direct_insert_conf:
         direct_insert_conf(args.direct_insert_conf)
+    elif args.force_update_ironic:
+        force_update_ironic()
 
 
 def get_argparser():
@@ -266,6 +290,9 @@ def get_argparser():
                         help='Update devices info configured by user')
     parser.add_argument('--direct-insert-conf', metavar='direct',
                         help='Directly insert devices info configured by user')
+    parser.add_argument('--force-update-ironic', metavar='force update', action='store_true',
+                        default=False,
+                        help='forcefully update ironic info')
     parser.add_argument('--execute', metavar='device-or-all',
                         help='Execute automation tasks')
     parser.add_argument('--list-devices',
