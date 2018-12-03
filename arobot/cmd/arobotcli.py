@@ -290,7 +290,7 @@ def get_argparser():
                         help='Update devices info configured by user')
     parser.add_argument('--direct-insert-conf', metavar='direct',
                         help='Directly insert devices info configured by user')
-    parser.add_argument('--force-update-ironic', metavar='force update', action='store_true',
+    parser.add_argument('--force-update-ironic', action='store_true',
                         default=False,
                         help='forcefully update ironic info')
     parser.add_argument('--execute', metavar='device-or-all',
