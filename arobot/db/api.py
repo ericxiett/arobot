@@ -52,6 +52,12 @@ class API(object):
         session.close()
         return all_raws
 
+    def get_all_ipmi(self):
+        session = sessionmaker(bind=self.engine)()
+        all_configs = session.query(models.IPMIConf).all()
+        session.close()
+        return all_configs
+
     def update_ipmi_conf_by_sn(self, sn, values):
         session = sessionmaker(bind=self.engine)()
         count = session.query(models.IPMIConf).filter_by(
